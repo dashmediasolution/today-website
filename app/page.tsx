@@ -1,69 +1,93 @@
-import Image from "next/image";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+import PopularFlightDeals from "./components/PopularFlightDeals";
+import HeroSection from "./components/HeroSection";
+import FeatureCards from "./components/FeatureCards";
+import WhyChooseUs from "./components/WhyChooseUs";
+import CustomerReviews from "./components/Reviews";
+import PopularDestinations from "./components/PopularDestinations";
+import TravelDeals from "./components/TravelDeals";
+ import {
+    Plane,
+    ArrowRight,
+    MapPin,
+    Sparkles,
+} from "lucide-react";
+import { Button } from "@base-ui/react";
+import Link from "next/link";
+export default function HomeClient() {
+
+    return (
+        <div className="flex min-w-screen flex-col items-center justify-center  ">
+             <HeroSection />
+            <FeatureCards />
+            <PopularFlightDeals />
+            <PopularDestinations />
+
+       
+<section className="w-[95%] px-2 py-3 sm:px-5 lg:px-8">
+    <div
+        className="relative mx-auto h-[260px] overflow-hidden rounded-2xl border border-orange-100 bg-[#fff0e6] bg-no-repeat sm:h-[320px] lg:h-[340px]"
+        style={{
+            backgroundImage: "url('/images/flights/Banner.webp')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+        }}
+    >
+        <div className="relative z-10 flex h-full items-center px-4 py-4 sm:px-8 lg:px-10">
+            <div className="max-w-[650px]">
+
+                {/* Badge */}
+                <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-[#ffc6a8] bg-white/70 px-2.5 py-1 text-[10px] font-semibold text-[#c96528] backdrop-blur-sm sm:mb-3 sm:gap-2 sm:px-3 sm:py-1.5 sm:text-sm">
+                    <Plane size={14} className="sm:h-4 sm:w-4" />
+                    Best Travel Flights
+                </div>
+
+                {/* Heading */}
+                <h1 className="max-w-[340px] text-[25px] font-extrabold leading-[1.15] tracking-tight text-[#202d3d] sm:max-w-none sm:text-4xl lg:text-[42px]">
+                    Get the Best{" "}
+                    <span className="text-[#e66b20]">
+                        Travel Flights
+                    </span>
+                </h1>
+
+                {/* Description */}
+                <p className="mt-2 max-w-[320px] text-[11px] leading-[17px] text-[#5d626d] sm:mt-3 sm:max-w-[480px] sm:text-base sm:leading-6">
+                    Book affordable flights to your favorite destinations
+                    and explore the world with ease.
+                </p>
+
+                {/* CTA */}
+                <div className="mt-3 sm:mt-5">
+                    <Link
+                        href="/search-results"
+                        className="inline-flex h-9 items-center justify-center rounded-full bg-[#ed7026] px-5 text-xs font-semibold text-white shadow-md shadow-orange-200/60 transition-all hover:-translate-y-0.5 hover:bg-[#d95d19] sm:h-12 sm:px-8 sm:text-base"
+                    >
+                        Search Flights
+                        <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    </Link>
+                </div>
+
+                {/* Supporting Text */}
+                <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10px] font-medium text-[#77716e] sm:mt-4 sm:gap-x-5 sm:text-sm">
+                    <span className="flex items-center gap-1.5">
+                        <Sparkles size={13} className="text-[#e77932] sm:h-[15px] sm:w-[15px]" />
+                        Explore destinations
+                    </span>
+
+                    <span className="flex items-center gap-1.5">
+                        <MapPin size={13} className="text-[#e77932] sm:h-[15px] sm:w-[15px]" />
+                        Discover new places
+                    </span>
+                </div>
+            </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
     </div>
-  );
-}
+</section>
+
+
+            <TravelDeals />
+            <WhyChooseUs />
+            <CustomerReviews />
+        </div>
+    );
+}       
