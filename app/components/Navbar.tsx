@@ -1,6 +1,6 @@
 
 "use client";
-
+import { Suspense } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -34,7 +34,7 @@ const navLinks = [
 const PHONE_NUMBER = "+919876543210";
 const PHONE_DISPLAY = "+91 98765 43210";
 
-export default function Navbar() {
+function NavbarContent() {
   const pathname = usePathname();
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#F1E3DC] bg-white/95 shadow-[0_2px_15px_rgba(16,35,75,0.04)] backdrop-blur-xl">
@@ -257,5 +257,12 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+  );
+}
+export default function Navbar() {
+  return (
+    <Suspense fallback={<div className="h-[68px] w-full bg-white sm:h-[76px]" />}>
+      <NavbarContent />
+    </Suspense>
   );
 }

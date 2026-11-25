@@ -154,7 +154,7 @@ export default function Footer() {
                     <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 
                         <p className="text-xs text-gray-400 sm:text-sm">
-                            © {new Date().getFullYear()} Anonymous. All rights reserved.
+                            © 2026 Anonymous. All rights reserved.
                         </p>
 
                         <p className="text-xs text-gray-400 sm:text-sm">
