@@ -55,7 +55,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: #E87536
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -125,6 +125,54 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans;
+    /* @apply font-sans; */
   }
+}
+/* Add this to your global.css */
+.price-range-input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  pointer-events: none;
+  touch-action: pan-y;
+  outline: none;
+}
+
+.price-range-input::-webkit-slider-runnable-track {
+  height: 6px;
+  background: transparent;
+}
+
+.price-range-input::-moz-range-track {
+  height: 6px;
+  background: transparent;
+}
+
+.price-range-input::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  margin-top: -5.5px;
+  border: 0;
+  border-radius: 9999px;
+  background: #E87536;
+  cursor: grab;
+  pointer-events: auto;
+}
+
+.price-range-input::-moz-range-thumb {
+  width: 17px;
+  height: 17px;
+  border: 0;
+  border-radius: 9999px;
+  background: #E87536;
+  cursor: grab;
+  pointer-events: auto;
 }

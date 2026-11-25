@@ -472,7 +472,7 @@ export default function ReviewBookingPage() {
         })
     );
 
-    router.push("/payment");
+    router.push("/confirmation");
 };
 
     if (loading) {
@@ -517,47 +517,74 @@ export default function ReviewBookingPage() {
 
             <div className="mx-auto max-w-7xl px-4 py-6 sm:py-8">
 
-                {/* Progress */}
-                <div className="mx-auto mb-8 flex w-full max-w-3xl items-center justify-center px-3">
-                    {/* Step 1 */}
-                    <div className="flex shrink-0 items-center gap-2">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-600 text-white shadow-sm">
-                            <Check size={17} strokeWidth={2.5} />
-                        </div>
-                        <div className="hidden sm:block">
-                            <p className="text-xs font-medium text-green-600">Step 1</p>
-                            <p className="text-sm font-semibold text-slate-700">Your trip</p>
-                        </div>
-                    </div>
+              
 
-                    {/* Connector */}
-                    <div className="mx-3 h-[2px] min-w-6 flex-1 rounded-full bg-green-500 sm:mx-5" />
+{/* Progress Stepper */}
+<div className="mx-auto mb-6 w-full max-w-3xl px-2 sm:px-3">
+    <div className="flex items-center justify-between gap-1 rounded-full border border-orange-100 bg-white px-2 py-1.5 shadow-sm sm:gap-2 sm:px-3">
 
-                    {/* Step 2 - Active */}
-                    <div className="flex shrink-0 items-center gap-2">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#ffa900] text-sm font-bold text-white shadow-md shadow-orange-200 ring-4 ring-orange-100">
-                            2
-                        </div>
-                        <div>
-                            <p className="text-xs font-medium text-[#d98b00]">Step 2</p>
-                            <p className="text-sm font-bold text-slate-900">Review details</p>
-                        </div>
-                    </div>
+        {/* Step 1 - Search */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E87536] text-white sm:h-7 sm:w-7">
+                <Check size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[10px] font-medium text-slate-700 sm:text-xs">
+                Search
+            </span>
+        </div>
 
-                    {/* Connector */}
-                    <div className="mx-3 h-[2px] min-w-6 flex-1 rounded-full bg-slate-200 sm:mx-5" />
+        <div className="h-px min-w-2 flex-1 bg-[#E87536]/40 sm:min-w-4" />
 
-                    {/* Step 3 */}
-                    <div className="flex shrink-0 items-center gap-2">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-400 ring-1 ring-slate-200">
-                            3
-                        </div>
-                        <div className="hidden sm:block">
-                            <p className="text-xs font-medium text-slate-400">Step 3</p>
-                            <p className="text-sm font-medium text-slate-400">Payment</p>
-                        </div>
-                    </div>
-                </div>
+        {/* Step 2 - Select */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E87536] text-white sm:h-7 sm:w-7">
+                <Check size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[10px] font-medium text-slate-700 sm:text-xs">
+                Select
+            </span>
+        </div>
+
+        <div className="h-px min-w-2 flex-1 bg-[#E87536]/40 sm:min-w-4" />
+
+        {/* Step 3 - Your trip */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E87536] text-white sm:h-7 sm:w-7">
+                <Check size={13} strokeWidth={2.5} />
+            </div>
+            <span className="hidden text-[10px] font-medium text-slate-700 min-[380px]:block sm:text-xs">
+                Your trip
+            </span>
+        </div>
+
+        <div className="h-px min-w-2 flex-1 bg-[#E87536]/40 sm:min-w-4" />
+
+        {/* Step 4 - Active */}
+        <div className="flex shrink-0 items-center gap-1 rounded-full bg-slate-900 px-1.5 py-1 sm:gap-1.5 sm:px-2.5">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E87536] text-[10px] font-bold text-white sm:h-6 sm:w-6">
+                4
+            </div>
+            <span className="text-[10px] font-semibold whitespace-nowrap text-white sm:text-xs">
+                <span className="sm:hidden">Details</span>
+                <span className="hidden sm:inline">Review details</span>
+            </span>
+        </div>
+
+        <div className="h-px min-w-2 flex-1 bg-slate-200 sm:min-w-4" />
+
+        {/* Step 5 - Confirm */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-50 text-[10px] font-semibold text-[#E87536] ring-1 ring-orange-100 sm:h-7 sm:w-7">
+                5
+            </div>
+            <span className="hidden text-[10px] font-medium text-slate-400 min-[380px]:block sm:text-xs">
+                Confirmation
+            </span>
+        </div>
+
+    </div>
+</div>
+
 
 
 
@@ -1056,7 +1083,7 @@ export default function ReviewBookingPage() {
                                 <div className="flex gap-3 rounded-xl bg-orange-50 p-3">
                                     <CircleCheck size={19} className="shrink-0 text-orange-500" />
                                     <p className="text-xs leading-5 text-slate-700">
-                                        Review all passenger information before continuing to payment.
+                                        Review all passenger information before continue.
                                     </p>
                                 </div>
 

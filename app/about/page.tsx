@@ -140,29 +140,29 @@ export default function AboutPage() {
                         <div className="mt-2 h-[2px] w-7 bg-[#ff624d]" />
 
                         <h2 className="mt-3 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                            Fly Further with SkyVoyage
+                            Fly Further with Anonymous
                         </h2>
 
                         <p className="mt-4 text-sm leading-7 text-[#46516a] sm:text-[15px]">
-                            SkyVoyage is a travel platform designed to
+                            Anonymous is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
                             somewhere new, we want to make discovering
                             travel options simple and convenient.
-                             SkyVoyage is a travel platform designed to
+                             Anonymous is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
                             somewhere new, we want to make discovering
                             travel options simple and convenient.
-                             SkyVoyage is a travel platform designed to
+                             Anonymous is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
                             somewhere new, we want to make discovering
                             travel options simple and convenient.
-                             SkyVoyage is a travel platform designed to
+                             Anonymous is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
@@ -247,7 +247,7 @@ export default function AboutPage() {
                         </p>
 
                         <a
-                            href="/flights"
+                            href="/search-results"
                             className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff725e] to-[#ff6048] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
                         >
                             Explore Flights
@@ -319,7 +319,7 @@ export default function AboutPage() {
 
                     <div className="text-center">
                         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#ff624d]">
-                            Why Choose SkyVoyage
+                            Why Choose Anonymous
                         </p>
 
                         <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
@@ -442,7 +442,7 @@ export default function AboutPage() {
                         </p>
 
                         <a
-                            href="/flights"
+                            href="/search-results"
                             className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#ff725e] to-[#ff6048] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
                         >
                             Book Your Flight

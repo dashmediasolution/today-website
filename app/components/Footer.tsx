@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 const quickLinks = [
-    { name: "Flights", href: "/flights" },
+    { name: "Flights", href: "/search-results" },
     { name: "Hotels", href: "/hotels" },
     { name: "Cars", href: "/cars" },
     { name: "Blogs", href: "/blogs" },

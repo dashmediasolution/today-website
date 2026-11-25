@@ -555,9 +555,11 @@ function BookingConfirmationContent() {
                     </span>
                   </div>
 
-                  <p className="max-w-xl text-sm leading-6 text-gray-500">
-                    Your booking details have been saved successfully.
-                    Your booking is currently in processing status.
+                  <p className=" text-sm md:text-base leading-6 text-gray-500">
+                   Thank you! A travel expert will contact you shortly to verify the final fare and applicable fare rules
+                    before any payment is charged. Once payment is completed and your ticket is successfully issued,
+                     your e-ticket will be sent to {booking.contactEmail}, typically within 3–6 hours, 
+                     subject to airline processing times. Please keep the request reference below handy for future assistance.
                   </p>
                 </div>
               </div>

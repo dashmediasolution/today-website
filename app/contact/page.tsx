@@ -11,7 +11,7 @@ import {
     Headset,
     Mail,
     ChevronDown,
-    
+    PhoneCall,
     Menu,
     X,
     CheckCircle2,
@@ -44,23 +44,15 @@ const contactItems = [
     {
         icon: Plane,
         title: "Our Email",
-        lines: ["support@skyvoyage.com"],
+        lines: ["support@exapmle.com"],
     },
-    {
-        icon: Phone,
-        title: "Call Us",
-        lines: ["+91 1800-123-4567", "Mon – Sat, 9 AM – 9 PM (IST)"],
-    },
+
     {
         icon: MapPin,
         title: "Our Office",
         lines: ["123 Travel Tower, MG Road,", "New Delhi – 110001, India"],
     },
-    {
-        icon: Headset,
-        title: "Live Chat",
-        lines: ["Chat with us 24/7 for instant", "assistance."],
-    },
+
 ];
 
 export default function ContactPage() {
@@ -87,6 +79,7 @@ export default function ContactPage() {
         }));
     };
 
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -98,18 +91,22 @@ export default function ContactPage() {
         setIsSubmitting(true);
 
         try {
-            // Connect your contact API here.
-            // Example:
-            // const response = await fetch("/api/contact", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify(formData),
-            // });
-            // if (!response.ok) throw new Error("Unable to send message");
+            const response = await fetch("/api/contact", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
 
-            await new Promise((resolve) => setTimeout(resolve, 700));
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Unable to send message.");
+            }
 
             setSubmitted(true);
+
             setFormData({
                 name: "",
                 email: "",
@@ -118,12 +115,17 @@ export default function ContactPage() {
                 message: "",
                 agree: false,
             });
-        } catch {
-            alert("Something went wrong. Please try again.");
+        } catch (error) {
+            alert(
+                error instanceof Error
+                    ? error.message
+                    : "Something went wrong. Please try again."
+            );
         } finally {
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <main className="overflow-hidden bg-[#fffdfc] text-[#17213d]">
@@ -138,7 +140,7 @@ export default function ContactPage() {
                     }}
                 />
 
- 
+
                 <div className="relative mx-auto flex min-h-[220px] max-w-7xl items-center px-5 py-10 sm:min-h-[250px] sm:px-8 lg:px-10">
                     <div className="max-w-xl">
                         <div className="mb-4 flex items-center gap-2 text-xs font-medium">
@@ -170,7 +172,7 @@ export default function ContactPage() {
             <section className="relative px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
                 {/* Background decoration */}
 
-                 
+
 
                 <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-9 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
                     {/* LEFT CONTACT DETAILS */}
@@ -193,6 +195,28 @@ export default function ContactPage() {
                         </p>
 
                         <div className="mt-5 max-w-md space-y-2.5">
+                            <div className="hidden items-center lg:flex">
+                              <a
+    href="tel:9876543210"
+    className="group flex min-h-[68px] w-full items-center gap-4 rounded-2xl bg-gradient-to-r from-[#E87536] to-[#F59A45] px-4 py-3 text-white shadow-md shadow-[#E87536]/20 transition-all hover:-translate-y-0.5 hover:shadow-lg"
+>
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20">
+        <PhoneCall size={21} />
+    </span>
+
+    <span className="flex flex-1 flex-col">
+        <span className="text-[13px] font-bold">
+            Call Us
+        </span>
+
+        <span className="mt-0.5 md:text-2xl leading-4 font-bold text-white/90">
+            +1-876-543-2101
+        </span>
+    </span>
+
+     
+</a>
+                            </div>
                             {contactItems.map((item) => {
                                 const Icon = item.icon;
 
@@ -236,7 +260,7 @@ export default function ContactPage() {
                                 exclusive deals and more.
                             </p>
 
-                           
+
                         </div>
                     </div>
 
@@ -381,9 +405,7 @@ export default function ContactPage() {
                                             <option value="Flight Enquiry">
                                                 Flight Enquiry
                                             </option>
-                                            <option value="Hotel Enquiry">
-                                                Hotel Enquiry
-                                            </option>
+
                                             <option value="Payment">
                                                 Payment
                                             </option>
@@ -494,7 +516,7 @@ export default function ContactPage() {
                             our services.
                         </p>
 
-                      
+
                     </div>
 
                     {/* FAQ ACCORDION */}
@@ -522,9 +544,8 @@ export default function ContactPage() {
 
                                         <ChevronDown
                                             size={17}
-                                            className={`shrink-0 transition-transform duration-200 ${
-                                                isOpen ? "rotate-180" : ""
-                                            }`}
+                                            className={`shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                                                }`}
                                         />
                                     </button>
 

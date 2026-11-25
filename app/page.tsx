@@ -17,7 +17,7 @@ import Link from "next/link";
 export default function HomeClient() {
 
     return (
-        <div className="flex min-w-screen flex-col items-center justify-center  ">
+        <div className="flex   flex-col items-center justify-center  ">
              <HeroSection />
             <FeatureCards />
             <PopularFlightDeals />

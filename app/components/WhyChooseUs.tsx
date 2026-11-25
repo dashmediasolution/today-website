@@ -72,7 +72,7 @@ export default function WhyChooseUs() {
 
                     <Link
                         href="tel:+911234567890"
-                        className="group mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-xs font-medium text-white transition-all duration-300 hover:bg-primary/90"
+                        className="group mt-4 inline-flex items-center gap-2 bg-amber-600 rounded-full [#E87536]  px-6 py-2.5 text-xs font-medium text-white transition-all duration-300 hover:bg-primary/90"
                     >
                         Call Now
                         <Phone size={14} />

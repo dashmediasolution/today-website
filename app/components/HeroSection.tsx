@@ -73,7 +73,7 @@ export default function HeroSection() {
 
                         {/* Desktop Typography */}
                         <div className="pointer-events-none relative z-10 mt-10 overflow-hidden">
-                            <span className="whitespace-nowrap bg-gradient-to-b from-[#FFF5F0] to-[#E88D5D] bg-clip-text text-[72px] font-black leading-none tracking-[16px] text-transparent xl:text-[96px] xl:tracking-[20px]">
+                            <span className="whitespace-nowrap bg-gradient-to-b from-[#FFF5F0] to-[#E88D5D] bg-clip-text text-[70px] font-black leading-none tracking-[16px] text-transparent md:text-[60px] lg:text-[60px] xl:text-[80px] xl:tracking-[20px]">
                                 ANONYMOUS
                             </span>
                         </div>

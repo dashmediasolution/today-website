@@ -17,6 +17,7 @@ import {
   Loader2,
   Mail,
   Phone,
+  Check
 } from "lucide-react";
 
 type Traveler = {
@@ -128,7 +129,7 @@ export default function PaymentPage() {
       const storedData = sessionStorage.getItem("bookingReviewData");
 
       if (!storedData) {
-        router.replace("/flights");
+        router.replace("/search-results");
         return;
       }
 
@@ -139,7 +140,7 @@ export default function PaymentPage() {
         !Array.isArray(parsedData.travelers) ||
         parsedData.travelers.length === 0
       ) {
-        router.replace("/flights");
+        router.replace("/search-results");
         return;
       }
 
@@ -184,69 +185,95 @@ export default function PaymentPage() {
   const contactPhone = booking?.contactPhone || "";
 
   // Save booking details and navigate to confirmation
-  const handleProceedToPay = () => {
-    if (!booking || processing) return;
+ 
+const handleProceedToPay = async () => {
+  if (!booking || processing) return;
 
-    setError("");
+  setError("");
 
-    if (!booking.bookingIntentId) {
-      setError("Booking session is invalid. Please return to flight review.");
-      return;
-    }
+  if (!booking.bookingIntentId) {
+    setError("Booking session is invalid. Please return to flight review.");
+    return;
+  }
 
-    if (!contactEmail.trim()) {
-      setError("Please provide a contact email address.");
-      return;
-    }
+  if (!contactEmail.trim()) {
+    setError("Please provide a contact email address.");
+    return;
+  }
 
-    const normalizedPhone = normalizePhone(contactPhone);
+  const normalizedPhone = normalizePhone(contactPhone);
 
-    if (!isValidPhone(normalizedPhone)) {
-      setError(
-        "A valid contact phone number with country code is required. Example: +919876543210."
-      );
-      return;
-    }
+  if (!isValidPhone(normalizedPhone)) {
+    setError(
+      "A valid contact phone number with country code is required. Example: +919876543210."
+    );
+    return;
+  }
 
-    const incompleteTraveler = booking.travelers.some(
-      (traveler) =>
-        !traveler.firstName?.trim() ||
-        !traveler.lastName?.trim() ||
-        !traveler.dob ||
-        !traveler.gender?.trim()
+  const incompleteTraveler = booking.travelers.some(
+    (traveler) =>
+      !traveler.firstName?.trim() ||
+      !traveler.lastName?.trim() ||
+      !traveler.dob ||
+      !traveler.gender?.trim()
+  );
+
+  if (incompleteTraveler) {
+    setError("Please complete all passenger information.");
+    return;
+  }
+
+  try {
+    setProcessing(true);
+
+    const updatedBooking: BookingData = {
+      ...booking,
+      contactPhone: normalizedPhone,
+      contactEmail: contactEmail.trim(),
+    };
+
+    const response = await fetch(
+      "/api/booking/send-confirmation-email",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          booking: updatedBooking,
+        }),
+      }
     );
 
-    if (incompleteTraveler) {
-      setError("Please complete all passenger information.");
-      return;
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.message || "Unable to send booking confirmation emails."
+      );
     }
 
-    try {
-      setProcessing(true);
+    sessionStorage.setItem(
+      "bookingConfirmationData",
+      JSON.stringify(updatedBooking)
+    );
 
-      const updatedBooking: BookingData = {
-        ...booking,
-        contactPhone: normalizedPhone,
-        contactEmail: contactEmail.trim(),
-      };
+    router.push(
+      `/booking/confirmation/${updatedBooking.bookingIntentId}`
+    );
+  } catch (error) {
+    console.error("BOOKING CONFIRMATION ERROR:", error);
 
-      // Save booking data for confirmation page
-      sessionStorage.setItem(
-        "bookingConfirmationData",
-        JSON.stringify(updatedBooking)
-      );
+    setError(
+      error instanceof Error
+        ? error.message
+        : "Unable to continue. Please try again."
+    );
 
-      // Navigate without making any API request
-      router.push(
-        `/booking/confirmation/${updatedBooking.bookingIntentId}`
-      );
-    } catch (error) {
-      console.error("BOOKING NAVIGATION ERROR:", error);
+    setProcessing(false);
+  }
+};
 
-      setError("Unable to continue. Please try again.");
-      setProcessing(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -266,7 +293,7 @@ export default function PaymentPage() {
         </p>
 
         <button
-          onClick={() => router.push("/flights")}
+          onClick={() => router.push("/search-flights")}
           className="rounded-lg bg-orange-500 px-5 py-2 text-sm font-semibold text-white"
         >
           Search flights
@@ -307,29 +334,72 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* Progress */}
-        <div className="mb-8 grid grid-cols-3 gap-2">
-          <div className="rounded-lg bg-green-50 p-3 text-center">
-            <CheckCircle2 className="mx-auto mb-1 h-5 w-5 text-green-600" />
-            <p className="text-xs font-semibold text-green-700 sm:text-sm">
-              Flight selected
-            </p>
-          </div>
+       {/* Progress Stepper */}
+<div className="mx-auto mb-6 w-full max-w-3xl px-2 sm:px-3">
+    <div className="flex items-center justify-between gap-1 rounded-full border border-orange-100 bg-white px-2 py-1.5 shadow-sm sm:gap-2 sm:px-3">
 
-          <div className="rounded-lg bg-green-50 p-3 text-center">
-            <CheckCircle2 className="mx-auto mb-1 h-5 w-5 text-green-600" />
-            <p className="text-xs font-semibold text-green-700 sm:text-sm">
-              Passenger details
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 text-center">
-            <CreditCard className="mx-auto mb-1 h-5 w-5 text-orange-600" />
-            <p className="text-xs font-semibold text-orange-700 sm:text-sm">
-              Confirmation
-            </p>
-          </div>
+        {/* Step 1 - Search */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E87536] text-white sm:h-7 sm:w-7">
+                <Check size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[10px] font-medium text-slate-700 sm:text-xs">
+                Search
+            </span>
         </div>
+
+        <div className="h-px min-w-2 flex-1 bg-[#E87536]/40 sm:min-w-4" />
+
+        {/* Step 2 - Select */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E87536] text-white sm:h-7 sm:w-7">
+                <Check size={13} strokeWidth={2.5} />
+            </div>
+            <span className="text-[10px] font-medium text-slate-700 sm:text-xs">
+                Select
+            </span>
+        </div>
+
+        <div className="h-px min-w-2 flex-1 bg-[#E87536]/40 sm:min-w-4" />
+
+        {/* Step 3 - Your trip */}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E87536] text-white sm:h-7 sm:w-7">
+                <Check size={13} strokeWidth={2.5} />
+            </div>
+            <span className="hidden text-[10px] font-medium text-slate-700 min-[380px]:block sm:text-xs">
+                Your trip
+            </span>
+        </div>
+
+        <div className="h-px min-w-2 flex-1 bg-[#E87536]/40 sm:min-w-4" />
+
+        {/* Step 4 - Active */}
+            <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E87536] text-white sm:h-7 sm:w-7">
+                <Check size={13} strokeWidth={2.5} />
+            </div>
+            <span className="hidden text-[10px] font-medium text-slate-700 min-[380px]:block sm:text-xs">
+                review Details
+            </span>
+        </div>
+    
+
+        <div className="h-px min-w-2 flex-1 bg-slate-200 sm:min-w-4" />
+
+        {/* Step 5 - Confirm */}
+         <div className="flex shrink-0 items-center gap-1 rounded-full bg-slate-900 px-1.5 py-1 sm:gap-1.5 sm:px-2.5">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E87536] text-[10px] font-bold text-white sm:h-6 sm:w-6">
+                5
+            </div>
+            <span className="text-[10px] font-semibold whitespace-nowrap text-white sm:text-xs">
+                <span className="sm:hidden">Confirmation</span>
+                <span className="hidden sm:inline">Confirm Booking</span>
+            </span>
+        </div>
+
+    </div>
+</div>
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
 
