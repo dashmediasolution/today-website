@@ -14,7 +14,7 @@ import {
   Home,
   X,
 } from "lucide-react";
-
+import { usePathname } from "next/navigation";
 import {
   Sheet,
   SheetContent,
@@ -35,6 +35,7 @@ const PHONE_NUMBER = "+919876543210";
 const PHONE_DISPLAY = "+91 98765 43210";
 
 export default function Navbar() {
+  const pathname = usePathname();
   return (
     <header className="sticky top-0 z-50 w-full border-b border-[#F1E3DC] bg-white/95 shadow-[0_2px_15px_rgba(16,35,75,0.04)] backdrop-blur-xl">
       <div className="mx-auto flex h-[68px] max-w-[1440px] items-center justify-between px-4 sm:h-[76px] sm:px-6 lg:px-10">
@@ -59,19 +60,34 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-9 lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="group relative py-2 text-[14px] font-semibold text-[#34435D] transition-colors hover:text-[#E87536]"
-            >
-              {link.name}
+ <nav className="hidden items-center gap-9 lg:flex">
+    {navLinks.map((link) => {
+        const isActive =
+            pathname === link.href ||
+            (link.href !== "/" && pathname.startsWith(`${link.href}/`));
 
-              <span className="absolute bottom-0 left-0 h-[2px] w-0 rounded-full bg-[#E87536] transition-all duration-300 group-hover:w-full" />
+        return (
+            <Link
+                key={link.name}
+                href={link.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`group relative py-2 text-[14px] font-semibold transition-colors md:text-base ${
+                    isActive
+                        ? "text-[#E87536]"
+                        : "text-[#34435D] hover:text-[#E87536]"
+                }`}
+            >
+                {link.name}
+
+                <span
+                    className={`absolute bottom-0 left-0 h-[2px] rounded-full bg-[#E87536] transition-all duration-300 ${
+                        isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                />
             </Link>
-          ))}
-        </nav>
+        );
+    })}
+</nav>
 
         {/* Desktop Call CTA */}
         <div className="hidden items-center lg:flex">

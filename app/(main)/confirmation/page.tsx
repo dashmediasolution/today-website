@@ -232,6 +232,32 @@ const handleProceedToPay = async () => {
       contactEmail: contactEmail.trim(),
     };
 
+    // Save booking details in MongoDB
+    const saveResponse = await fetch("/api/booking", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bookingIntentId: updatedBooking.bookingIntentId,
+        flightDetails: updatedBooking.offer,
+        passengerDetails: updatedBooking.travelers,
+        contactEmail: updatedBooking.contactEmail,
+        contactPhone: updatedBooking.contactPhone,
+        totalPrice: Number(updatedBooking.total),
+        currency: updatedBooking.currency,
+      }),
+    });
+
+    const saveResult = await saveResponse.json();
+
+    if (!saveResponse.ok) {
+      throw new Error(
+        saveResult.message || "Unable to save booking details."
+      );
+    }
+
+    // Send existing confirmation emails
     const response = await fetch(
       "/api/booking/send-confirmation-email",
       {
@@ -253,9 +279,16 @@ const handleProceedToPay = async () => {
       );
     }
 
+    // Store saved database booking ID
+    const confirmationData = {
+      ...updatedBooking,
+      bookingId: saveResult.bookingId,
+      bookingReference: saveResult.bookingReference,
+    };
+
     sessionStorage.setItem(
       "bookingConfirmationData",
-      JSON.stringify(updatedBooking)
+      JSON.stringify(confirmationData)
     );
 
     router.push(

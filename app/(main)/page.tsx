@@ -1,11 +1,11 @@
 
-import PopularFlightDeals from "./components/PopularFlightDeals";
-import HeroSection from "./components/HeroSection";
-import FeatureCards from "./components/FeatureCards";
-import WhyChooseUs from "./components/WhyChooseUs";
-import CustomerReviews from "./components/Reviews";
-import PopularDestinations from "./components/PopularDestinations";
-import TravelDeals from "./components/TravelDeals";
+import PopularFlightDeals from "../components/PopularFlightDeals";
+import HeroSection from "../components/HeroSection";
+import FeatureCards from "../components/FeatureCards";
+import WhyChooseUs from "../components/WhyChooseUs";
+import CustomerReviews from "../components/Reviews";
+import PopularDestinations from "../components/PopularDestinations";
+import TravelDeals from "../components/TravelDeals";
  import {
     Plane,
     ArrowRight,

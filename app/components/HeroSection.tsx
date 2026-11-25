@@ -42,7 +42,7 @@ export default function HeroSection() {
 
     return (
         <section className="relative isolate w-full overflow-hidden bg-[#FFF5F0]">
-            <div className="relative mx-auto w-full max-w-[1440px] px-4 pb-8 pt-7 sm:px-6 sm:pb-12 sm:pt-10 lg:px-9 lg:pb-0 lg:pt-[54px]">
+            <div className="relative mx-auto w-full   max-w-[1440px] px-4 pb-8 pt-7 sm:px-6 sm:pb-12 sm:pt-10 lg:px-9 lg:pb-0 lg:pt-[54px]">
 
                 {/* Desktop Layout */}
                 <div className="hidden items-start gap-8 lg:grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
@@ -107,7 +107,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* Mobile / Tablet Layout */}
-                <div className="flex flex-col gap-6 lg:hidden">
+                <div className="flex flex-col gap-6 lg:hidden h-[690px] sm:h-[710px]">
 
                     {/* Heading */}
                     <div className="relative z-10">
@@ -128,7 +128,7 @@ export default function HeroSection() {
 
                     {/* Image Above Search Bar */}
                     <div className="relative z-10 w-full">
-                        <div className="relative h-[270px] w-full overflow-hidden rounded-[24px] shadow-sm sm:h-[320px] sm:rounded-[30px] md:h-[380px]">
+                        <div className="relative h-[350px] w-full overflow-hidden rounded-[24px] shadow-sm sm:h-[320px] sm:rounded-[30px] md:h-[380px]">
                             <Image
                                 src="/images/Travelers.webp"
                                 alt="Travelers discovering their next adventure"
@@ -141,7 +141,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* Search Bar Below Image */}
-                    <div className="relative z-30 bottom-14 w-full">
+                    <div className="relative z-30 bottom-30 w-full">
                         <FlightSearchBar onSearch={handleSearch} />
                     </div>
                 </div>

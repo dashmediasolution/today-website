@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import FlightSearchBar from "../components/FlightSearchBar";
+import FlightSearchBar from "../../components/FlightSearchBar";
 
 import {
     ArrowLeft,
