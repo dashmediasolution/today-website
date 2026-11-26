@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-
+import prisma from "@/lib/prisma";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const BRAND_COLOR = "#E87536";
@@ -233,7 +233,20 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+const savedBooking = await prisma.booking.findFirst({
+  where: {
+    bookingIntentId: booking.bookingIntentId,
+  },
+});
 
+if (!savedBooking) {
+  return NextResponse.json(
+    { success: false, message: "Booking not found." },
+    { status: 404 }
+  );
+}
+
+const reference = escapeHtml(savedBooking.bookingReference);
     const adminEmail = process.env.ADMIN_EMAIL;
     const fromEmail = process.env.EMAIL_FROM;
 
@@ -244,8 +257,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const reference = escapeHtml(booking.bookingIntentId);
-    const customerName = escapeHtml(
+     const customerName = escapeHtml(
       booking.travelers?.length
         ? getPassengerName(booking.travelers[0])
         : "Customer"
@@ -395,14 +407,14 @@ export async function POST(request: NextRequest) {
       resend.emails.send({
         from: fromEmail,
         to: adminRecipient,
-        subject: `New Flight Booking – ${booking.bookingIntentId}`,
+        subject: `New Flight Booking – ${booking.bookingReference}`,
         html: adminHtml,
       }),
 
       resend.emails.send({
         from: fromEmail,
         to: customerRecipient,
-        subject: `Your Booking Request – ${booking.bookingIntentId}`,
+        subject: `Your Booking Request – ${booking.bookingReference}`,
         html: customerHtml,
       }),
     ]);

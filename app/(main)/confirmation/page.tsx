@@ -186,6 +186,7 @@ export default function PaymentPage() {
 
   // Save booking details and navigate to confirmation
  
+
 const handleProceedToPay = async () => {
   if (!booking || processing) return;
 
@@ -232,7 +233,6 @@ const handleProceedToPay = async () => {
       contactEmail: contactEmail.trim(),
     };
 
-    // Save booking details in MongoDB
     const saveResponse = await fetch("/api/booking", {
       method: "POST",
       headers: {
@@ -257,7 +257,12 @@ const handleProceedToPay = async () => {
       );
     }
 
-    // Send existing confirmation emails
+    if (!saveResult.bookingReference) {
+      throw new Error(
+        "Booking was saved, but the booking reference was not returned."
+      );
+    }
+
     const response = await fetch(
       "/api/booking/send-confirmation-email",
       {
@@ -278,8 +283,6 @@ const handleProceedToPay = async () => {
         result.message || "Unable to send booking confirmation emails."
       );
     }
-
-    // Store saved database booking ID
     const confirmationData = {
       ...updatedBooking,
       bookingId: saveResult.bookingId,
@@ -306,6 +309,8 @@ const handleProceedToPay = async () => {
     setProcessing(false);
   }
 };
+
+
 
 
 // const handleProceedToPay = async () => {
@@ -908,10 +913,10 @@ const handleProceedToPay = async () => {
                 </div>
               )}
 
-              <div className="mt-5 flex items-center justify-center gap-2 text-xs text-gray-500">
+              {/* <div className="mt-5 flex items-center justify-center gap-2 text-xs text-gray-500">
                 <LockKeyhole className="h-4 w-4 text-green-600" />
                 Your booking details are saved securely in this session
-              </div>
+              </div> */}
             </section>
 
             {/* Security */}

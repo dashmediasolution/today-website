@@ -26,6 +26,7 @@ import {
 
 type BookingData = {
   bookingIntentId: string;
+  bookingReference: string;
   offer: any;
   searchData: any;
   travelers: any[];
@@ -112,7 +113,7 @@ function getPassengerName(traveler: any) {
 }
 
 function BookingConfirmationContent() {
-    const params = useParams();
+  const params = useParams();
   const router = useRouter();
 
   const [booking, setBooking] = useState<BookingData | null>(null);
@@ -151,169 +152,335 @@ function BookingConfirmationContent() {
   }, [params.id]);
 
   // Download complete booking details as PDF
-  const handleDownloadPDF = async () => {
-    if (!booking || downloading) return;
 
-    try {
-      setDownloading(true);
+const handleDownloadPDF = async () => {
+  if (!booking || downloading) return;
 
-      const { jsPDF } = await import("jspdf");
+  try {
+    setDownloading(true);
 
-      const doc = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
+    const { jsPDF } = await import("jspdf");
 
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
+    const doc = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
 
-      const margin = 16;
-      const contentWidth = pageWidth - margin * 2;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-      let y = 18;
+    const margin = 16;
+    const contentWidth = pageWidth - margin * 2;
+    const rightEdge = pageWidth - margin;
 
-      const addPageIfNeeded = (requiredHeight = 10) => {
-        if (y + requiredHeight > pageHeight - 18) {
-          doc.addPage();
-          y = 20;
-        }
-      };
+    let y = 18;
 
-      const addSection = (title: string) => {
-        addPageIfNeeded(18);
+    const colors = {
+      navy: [24, 39, 61] as [number, number, number],
+      orange: [232, 117, 54] as [number, number, number],
+      lightOrange: [255, 245, 237] as [number, number, number],
+      lightGray: [247, 248, 250] as [number, number, number],
+      border: [226, 230, 235] as [number, number, number],
+      text: [45, 55, 72] as [number, number, number],
+      muted: [115, 125, 140] as [number, number, number],
+      white: [255, 255, 255] as [number, number, number],
+      green: [35, 135, 90] as [number, number, number],
+    };
 
-        doc.setFillColor(255, 247, 230);
+    const bookingReference = booking.bookingReference || "—";
+
+    const offer = booking.offer;
+    const currency = offer?.total_currency || booking.currency || "INR";
+
+    const formatAmount = (amount: number | string) => {
+      const value = Number(amount);
+
+      if (!Number.isFinite(value)) return "—";
+
+      try {
+        return new Intl.NumberFormat("en-IN", {
+          style: "currency",
+          currency,
+          maximumFractionDigits: 2,
+        }).format(value);
+      } catch {
+        return `${currency} ${value.toFixed(2)}`;
+      }
+    };
+
+    const addPageIfNeeded = (requiredHeight = 10) => {
+      if (y + requiredHeight > pageHeight - 22) {
+        doc.addPage();
+        y = 20;
+      }
+    };
+
+    const addSection = (title: string) => {
+      addPageIfNeeded(17);
+
+      doc.setFillColor(...colors.lightGray);
+      doc.roundedRect(
+        margin,
+        y,
+        contentWidth,
+        10,
+        2,
+        2,
+        "F"
+      );
+
+      doc.setFillColor(...colors.orange);
+      doc.roundedRect(
+        margin,
+        y,
+        1.5,
+        10,
+        0.5,
+        0.5,
+        "F"
+      );
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(...colors.navy);
+      doc.text(title.toUpperCase(), margin + 5, y + 6.5);
+
+      y += 16;
+    };
+
+    const addText = (
+      label: string,
+      value: string | number,
+      options?: {
+        bold?: boolean;
+        valueColor?: [number, number, number];
+      }
+    ) => {
+      const labelWidth = 47;
+      const valueWidth = contentWidth - labelWidth - 4;
+
+      const displayValue = String(value || "—");
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+
+      const lines = doc.splitTextToSize(
+        displayValue,
+        valueWidth
+      );
+
+      const lineHeight = 4.8;
+      const requiredHeight = Math.max(
+        7,
+        lines.length * lineHeight + 2
+      );
+
+      addPageIfNeeded(requiredHeight);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(...colors.muted);
+      doc.text(label, margin, y);
+
+      doc.setFont(
+        "helvetica",
+        options?.bold ? "bold" : "normal"
+      );
+
+      doc.setFontSize(9);
+      doc.setTextColor(
+        ...(options?.valueColor || colors.text)
+      );
+
+      doc.text(lines, margin + labelWidth, y);
+
+      y += requiredHeight;
+    };
+
+    const addDivider = () => {
+      addPageIfNeeded(6);
+
+      doc.setDrawColor(...colors.border);
+      doc.setLineWidth(0.25);
+      doc.line(margin, y, rightEdge, y);
+
+      y += 7;
+    };
+
+    const addSmallHeading = (text: string) => {
+      addPageIfNeeded(10);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(...colors.orange);
+      doc.text(text.toUpperCase(), margin, y);
+
+      y += 7;
+    };
+
+    // ==========================================
+    // HEADER
+    // ==========================================
+
+    doc.setFillColor(...colors.navy);
+    doc.roundedRect(
+      margin,
+      y,
+      contentWidth,
+      34,
+      3,
+      3,
+      "F"
+    );
+
+    doc.setFillColor(...colors.orange);
+    doc.roundedRect(
+      margin,
+      y,
+      3,
+      34,
+      1,
+      1,
+      "F"
+    );
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.setTextColor(...colors.white);
+    doc.text("FLIGHT BOOKING", margin + 8, y + 12);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(220, 226, 235);
+    doc.text(
+      "Booking confirmation and travel itinerary",
+      margin + 8,
+      y + 19
+    );
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(255, 190, 145);
+    doc.text(
+      `REFERENCE: ${bookingReference}`,
+      margin + 8,
+      y + 27
+    );
+
+    y += 43;
+
+    // ==========================================
+    // BOOKING INFORMATION
+    // ==========================================
+
+    addSection("Booking information");
+
+    addText("Booking reference", bookingReference, {
+      bold: true,
+      valueColor: colors.orange,
+    });
+
+    addText("Booking status", "PROCESSING", {
+      bold: true,
+      valueColor: colors.green,
+    });
+
+    addText(
+      "Generated on",
+      new Date().toLocaleString("en-IN")
+    );
+
+    addDivider();
+
+    // ==========================================
+    // FLIGHT ITINERARY
+    // ==========================================
+
+    addSection("Flight itinerary");
+
+    (offer?.slices || []).forEach(
+      (slice: any, index: number) => {
+        const segments = slice.segments || [];
+        const firstSegment = segments[0];
+        const lastSegment = segments[segments.length - 1];
+
+        addPageIfNeeded(38);
+
+        addSmallHeading(
+          index === 0 ? "Outbound flight" : "Return flight"
+        );
+
+        const originName =
+          slice.origin?.city_name ||
+          slice.origin?.name ||
+          "Unknown";
+
+        const destinationName =
+          slice.destination?.city_name ||
+          slice.destination?.name ||
+          "Unknown";
+
+        // Route card
+        doc.setFillColor(...colors.lightOrange);
         doc.roundedRect(
           margin,
           y,
           contentWidth,
-          9,
+          27,
           2,
           2,
           "F"
         );
 
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(11);
-        doc.setTextColor(40, 40, 40);
-        doc.text(title, margin + 4, y + 6);
-
-        y += 15;
-      };
-
-      const addText = (
-        label: string,
-        value: string,
-        options?: { bold?: boolean }
-      ) => {
-        const labelWidth = 48;
-        const valueWidth = contentWidth - labelWidth - 4;
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-
-        const lines = doc.splitTextToSize(
-          value || "—",
-          valueWidth
-        );
-
-        const lineHeight = 5;
-        const requiredHeight = Math.max(7, lines.length * lineHeight + 2);
-
-        addPageIfNeeded(requiredHeight);
-
-        doc.setTextColor(110, 110, 110);
-        doc.text(label, margin, y);
-
-        doc.setFont(
-          "helvetica",
-          options?.bold ? "bold" : "normal"
-        );
-
-        doc.setTextColor(35, 35, 35);
-        doc.text(lines, margin + labelWidth, y);
-
-        y += requiredHeight;
-      };
-
-      const addDivider = () => {
-        addPageIfNeeded(5);
-
-        doc.setDrawColor(225, 225, 225);
-        doc.line(margin, y, pageWidth - margin, y);
-
-        y += 6;
-      };
-
-      const offer = booking.offer;
-      const currency = offer?.total_currency || booking.currency || "INR";
-
-      // Header
-      doc.setFillColor(255, 169, 0);
-      doc.roundedRect(margin, y, contentWidth, 29, 3, 3, "F");
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(19);
-      doc.setTextColor(30, 30, 30);
-      doc.text("FLIGHT BOOKING DETAILS", margin + 5, y + 11);
-
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.text(
-        "Booking information and travel itinerary",
-        margin + 5,
-        y + 19
-      );
-
-      y += 38;
-
-      // Booking reference and status
-      addSection("BOOKING INFORMATION");
-
-      addText("Booking number", booking.bookingIntentId, {
-        bold: true,
-      });
-
-      addText("Booking status", "PROCESSING", {
-        bold: true,
-      });
-
-      addText("Generated on", new Date().toLocaleString("en-IN"));
-
-      addDivider();
-
-      // Flight details
-      addSection("FLIGHT ITINERARY");
-
-      (offer?.slices || []).forEach((slice: any, index: number) => {
-        const segments = slice.segments || [];
-        const firstSegment = segments[0];
-        const lastSegment = segments[segments.length - 1];
-
-        addPageIfNeeded(35);
+        const middleX = pageWidth / 2;
 
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(10);
-        doc.setTextColor(230, 145, 0);
+        doc.setFontSize(15);
+        doc.setTextColor(...colors.navy);
 
         doc.text(
-          index === 0 ? "OUTBOUND FLIGHT" : "RETURN FLIGHT",
-          margin,
-          y
+          slice.origin?.iata_code || "—",
+          margin + 5,
+          y + 10
         );
 
-        y += 8;
-
-        addText(
-          "From",
-          `${slice.origin?.city_name || slice.origin?.name || ""} (${slice.origin?.iata_code || "—"})`
+        doc.text(
+          slice.destination?.iata_code || "—",
+          rightEdge - 5,
+          y + 10,
+          { align: "right" }
         );
 
-        addText(
-          "To",
-          `${slice.destination?.city_name || slice.destination?.name || ""} (${slice.destination?.iata_code || "—"})`
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(7.5);
+        doc.setTextColor(...colors.muted);
+
+        doc.text(
+          originName,
+          margin + 5,
+          y + 17
         );
+
+        doc.text(
+          destinationName,
+          rightEdge - 5,
+          y + 17,
+          { align: "right" }
+        );
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(...colors.orange);
+
+        doc.text(
+          "TO",
+          middleX,
+          y + 12,
+          { align: "center" }
+        );
+
+        y += 33;
 
         addText(
           "Departure",
@@ -333,160 +500,286 @@ function BookingConfirmationContent() {
           )
         );
 
-        addText("Stops", String(Math.max(segments.length - 1, 0)));
+        addText(
+          "Stops",
+          String(Math.max(segments.length - 1, 0))
+        );
 
-        segments.forEach((segment: any, segmentIndex: number) => {
-          addText(
-            `Segment ${segmentIndex + 1}`,
-            [
-              segment.marketing_carrier?.name ||
+        if (segments.length > 0) {
+          addSmallHeading("Airline details");
+
+          segments.forEach(
+            (segment: any, segmentIndex: number) => {
+              const airline =
+                segment.marketing_carrier?.name ||
                 segment.operating_carrier?.name ||
-                "Airline",
-              segment.marketing_carrier_flight_number || "",
-              segment.origin?.iata_code
-                ? `${segment.origin.iata_code} → ${segment.destination?.iata_code || ""}`
-                : "",
-            ]
-              .filter(Boolean)
-              .join(" | ")
+                "Airline";
+
+              const flightNumber =
+                segment.marketing_carrier_flight_number || "";
+
+              const route = [
+                segment.origin?.iata_code,
+                segment.destination?.iata_code,
+              ]
+                .filter(Boolean)
+                .join(" - ");
+
+              addText(
+                `Segment ${segmentIndex + 1}`,
+                [airline, flightNumber, route]
+                  .filter(Boolean)
+                  .join(" | "),
+                { bold: true }
+              );
+            }
           );
-        });
+        }
 
         y += 3;
         addDivider();
-      });
+      }
+    );
 
-      // Passenger details
-      addSection("PASSENGER DETAILS");
+    // ==========================================
+    // PASSENGER DETAILS
+    // ==========================================
 
-      booking.travelers.forEach((traveler, index) => {
-        addText(`Passenger ${index + 1}`, getPassengerName(traveler), {
-          bold: true,
-        });
+    addSection("Passenger information");
 
-        addText("Passenger type", traveler.type || "Adult");
-        addText("Date of birth", formatDate(traveler.dob));
-        addText("Gender", traveler.gender || "—");
-        addText("Email", traveler.email || "—");
+    booking.travelers.forEach(
+      (traveler: any, index: number) => {
+        addPageIfNeeded(30);
 
-        y += 2;
-      });
+        addText(
+          `Passenger ${index + 1}`,
+          getPassengerName(traveler),
+          { bold: true }
+        );
 
-      addDivider();
+        addText(
+          "Passenger type",
+          traveler.type || "Adult"
+        );
 
-      // Contact details
-      addSection("CONTACT INFORMATION");
+        addText(
+          "Date of birth",
+          formatDate(traveler.dob)
+        );
 
-      addText("Email address", booking.contactEmail || "—");
-      addText("Phone number", booking.contactPhone || "—");
+        addText(
+          "Gender",
+          traveler.gender || "—"
+        );
 
-      addDivider();
+        addText(
+          "Email",
+          traveler.email || "—"
+        );
 
-      // Add-ons
-      addSection("ADDITIONAL SERVICES");
+        if (index < booking.travelers.length - 1) {
+          y += 2;
+          addDivider();
+        }
+      }
+    );
 
-      addText(
-        "Travel protection",
-        booking.addOns?.protection ? "Selected" : "Not selected"
-      );
+    addDivider();
 
-      addText(
-        "Travel assistance",
-        booking.addOns?.assistance ? "Selected" : "Not selected"
-      );
+    // ==========================================
+    // CONTACT INFORMATION
+    // ==========================================
 
-      addDivider();
+    addSection("Contact information");
 
-      // Fare summary
-      addSection("FARE SUMMARY");
+    addText(
+      "Email address",
+      booking.contactEmail || "—"
+    );
 
-      addText(
-        "Passengers",
-        String(booking.travelers.length)
-      );
+    addText(
+      "Phone number",
+      booking.contactPhone || "—"
+    );
 
-      addText(
-        "Flight fare",
-        formatPrice(offer?.total_amount, currency)
-      );
+    addDivider();
 
-      addText(
-        "Total amount",
-        formatPrice(offer?.total_amount, currency),
-        { bold: true }
-      );
+    // ==========================================
+    // ADDITIONAL SERVICES
+    // ==========================================
 
-      y += 5;
+    addSection("Additional services");
 
-      addPageIfNeeded(25);
+    addText(
+      "Travel protection",
+      booking.addOns?.protection
+        ? "Selected"
+        : "Not selected"
+    );
 
-      doc.setFillColor(255, 247, 230);
-      doc.roundedRect(
+    addText(
+      "Travel assistance",
+      booking.addOns?.assistance
+        ? "Selected"
+        : "Not selected"
+    );
+
+    addDivider();
+
+    // ==========================================
+    // FARE SUMMARY
+    // ==========================================
+
+    addSection("Fare summary");
+
+    addText(
+      "Total passengers",
+      String(booking.travelers.length)
+    );
+
+    addText(
+      "Flight fare",
+      formatAmount(offer?.total_amount)
+    );
+
+    addPageIfNeeded(24);
+
+    doc.setFillColor(...colors.navy);
+    doc.roundedRect(
+      margin,
+      y,
+      contentWidth,
+      17,
+      2,
+      2,
+      "F"
+    );
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(...colors.white);
+
+    doc.text(
+      "TOTAL AMOUNT",
+      margin + 5,
+      y + 10
+    );
+
+    doc.setFontSize(13);
+    doc.setTextColor(255, 190, 145);
+
+    doc.text(
+      formatAmount(offer?.total_amount),
+      rightEdge - 5,
+      y + 10,
+      { align: "right" }
+    );
+
+    y += 24;
+
+    // ==========================================
+    // BOOKING STATUS NOTE
+    // ==========================================
+
+    addPageIfNeeded(28);
+
+    doc.setFillColor(...colors.lightOrange);
+    doc.roundedRect(
+      margin,
+      y,
+      contentWidth,
+      22,
+      2,
+      2,
+      "F"
+    );
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...colors.navy);
+
+    doc.text(
+      "BOOKING STATUS: PROCESSING",
+      margin + 5,
+      y + 7
+    );
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...colors.muted);
+
+    doc.text(
+      "A travel expert will contact you to verify the final fare and applicable fare rules.",
+      margin + 5,
+      y + 13
+    );
+
+    doc.text(
+      "This document is a booking details summary, not an airline ticket.",
+      margin + 5,
+      y + 18
+    );
+
+    // ==========================================
+    // FOOTER ON ALL PAGES
+    // ==========================================
+
+    const pageCount = doc.getNumberOfPages();
+
+    for (let page = 1; page <= pageCount; page++) {
+      doc.setPage(page);
+
+      doc.setDrawColor(...colors.border);
+      doc.setLineWidth(0.25);
+
+      doc.line(
         margin,
-        y,
-        contentWidth,
-        19,
-        2,
-        2,
-        "F"
-      );
-
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(9);
-      doc.setTextColor(90, 75, 45);
-
-      doc.text(
-        "CURRENT BOOKING STATUS: PROCESSING",
-        margin + 4,
-        y + 7
+        pageHeight - 16,
+        rightEdge,
+        pageHeight - 16
       );
 
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
+      doc.setFontSize(7.5);
+      doc.setTextColor(...colors.muted);
 
       doc.text(
-        "This document is a booking details summary, not an airline ticket.",
-        margin + 4,
-        y + 13
+        `Booking Reference: ${bookingReference}`,
+        margin,
+        pageHeight - 10
       );
 
-      // Footer on all pages
-      const pageCount = doc.getNumberOfPages();
-
-      for (let page = 1; page <= pageCount; page++) {
-        doc.setPage(page);
-
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8);
-        doc.setTextColor(140, 140, 140);
-
-        doc.text(
-          `Booking reference: ${booking.bookingIntentId}`,
-          margin,
-          pageHeight - 9
-        );
-
-        doc.text(
-          `Page ${page} of ${pageCount}`,
-          pageWidth - margin,
-          pageHeight - 9,
-          { align: "right" }
-        );
-      }
-
-      const safeReference = booking.bookingIntentId.replace(
-        /[^a-zA-Z0-9-_]/g,
-        "-"
+      doc.text(
+        `Page ${page} of ${pageCount}`,
+        rightEdge,
+        pageHeight - 10,
+        { align: "right" }
       );
-
-      doc.save(`Flight-Booking-${safeReference}.pdf`);
-    } catch (error) {
-      console.error("PDF DOWNLOAD ERROR:", error);
-      alert("Unable to generate PDF. Please try again.");
-    } finally {
-      setDownloading(false);
     }
-  };
+
+    // ==========================================
+    // DOWNLOAD PDF
+    // ==========================================
+
+    const safeReference = bookingReference.replace(
+      /[^a-zA-Z0-9-_]/g,
+      "-"
+    );
+
+    doc.save(`Flight-Booking-${safeReference}.pdf`);
+
+  } catch (error) {
+    console.error("PDF DOWNLOAD ERROR:", error);
+    alert("Unable to generate PDF. Please try again.");
+  } finally {
+    setDownloading(false);
+  }
+};
+  useEffect(() => {
+    return () => {
+        sessionStorage.removeItem("bookingConfirmationData");
+    };
+}, []);
 
   if (loading) {
     return (
@@ -529,7 +822,7 @@ function BookingConfirmationContent() {
 
   return (
     <main className="min-h-screen bg-[#f7f8fa] pb-16">
-   
+
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
         {/* Status card */}
@@ -556,15 +849,23 @@ function BookingConfirmationContent() {
                   </div>
 
                   <p className=" text-sm md:text-base leading-6 text-gray-500">
-                   Thank you! A travel expert will contact you shortly to verify the final fare and applicable fare rules
+                    Thank you! A travel expert will contact you shortly to verify the final fare and applicable fare rules
                     before any payment is charged. Once payment is completed and your ticket is successfully issued,
-                     your e-ticket will be sent to {booking.contactEmail}, typically within 3–6 hours, 
-                     subject to airline processing times. Please keep the request reference below handy for future assistance.
+                    your e-ticket will be sent to {booking.contactEmail}, typically within 3–6 hours,
+                    subject to airline processing times. Please keep the request reference below handy for future assistance.
                   </p>
+                  <div className="mt-5 rounded-xl border border-orange-200 bg-orange-50 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-orange-700">
+                      Booking Reference
+                    </p>
+                    <p className="mt-1 text-xl font-extrabold tracking-wide text-gray-900">
+                      {booking.bookingReference}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-         
+
             </div>
 
             <div className="mt-7 flex flex-col gap-3 border-t border-gray-100 pt-6 sm:flex-row">
@@ -593,7 +894,7 @@ function BookingConfirmationContent() {
           </div>
         </section>
 
-     
+
 
         {/* Main layout */}
         <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
@@ -714,9 +1015,8 @@ function BookingConfirmationContent() {
                         {segments.map((segment: any, segmentIndex: number) => (
                           <div
                             key={segment.id || segmentIndex}
-                            className={`flex flex-wrap items-center justify-between gap-2 text-xs ${
-                              segmentIndex > 0 ? "mt-3 border-t border-gray-200 pt-3" : ""
-                            }`}
+                            className={`flex flex-wrap items-center justify-between gap-2 text-xs ${segmentIndex > 0 ? "mt-3 border-t border-gray-200 pt-3" : ""
+                              }`}
                           >
                             <div>
                               <p className="font-bold text-gray-800">
@@ -881,11 +1181,10 @@ function BookingConfirmationContent() {
                     Travel protection
                   </span>
 
-                  <span className={`text-xs font-bold ${
-                    booking.addOns?.protection
+                  <span className={`text-xs font-bold ${booking.addOns?.protection
                       ? "text-green-600"
                       : "text-gray-400"
-                  }`}>
+                    }`}>
                     {booking.addOns?.protection ? "Selected" : "Not selected"}
                   </span>
                 </div>
@@ -895,11 +1194,10 @@ function BookingConfirmationContent() {
                     Travel assistance
                   </span>
 
-                  <span className={`text-xs font-bold ${
-                    booking.addOns?.assistance
+                  <span className={`text-xs font-bold ${booking.addOns?.assistance
                       ? "text-green-600"
                       : "text-gray-400"
-                  }`}>
+                    }`}>
                     {booking.addOns?.assistance ? "Selected" : "Not selected"}
                   </span>
                 </div>
@@ -910,7 +1208,7 @@ function BookingConfirmationContent() {
           {/* Right sidebar */}
           <aside className="space-y-5 lg:sticky lg:top-6">
 
-        
+
             {/* Fare summary */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
               <h2 className="text-lg font-extrabold text-gray-900">
@@ -973,45 +1271,45 @@ function BookingConfirmationContent() {
 
             {/* Help card */}
             <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-  <div className="flex flex-col gap-4">
-    <div className="flex items-start gap-3">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E87536]/10">
-        <Headset className="h-5 w-5 text-[#E87536]" />
-      </div>
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E87536]/10">
+                    <Headset className="h-5 w-5 text-[#E87536]" />
+                  </div>
 
-      <div>
-        <h3 className="font-bold text-gray-900">
-          Need assistance?
-        </h3>
+                  <div>
+                    <h3 className="font-bold text-gray-900">
+                      Need assistance?
+                    </h3>
 
-        <p className="mt-1 text-sm leading-5 text-gray-500">
-          Our support team is here to help you with your booking.
-          Keep your booking reference handy when calling.
-        </p>
-      </div>
-    </div>
+                    <p className="mt-1 text-sm leading-5 text-gray-500">
+                      Our support team is here to help you with your booking.
+                      Keep your booking reference handy when calling.
+                    </p>
+                  </div>
+                </div>
 
-    <a
-      href="tel:+919876543210"
-      className="group flex h-14 w-full items-center justify-between gap-3 rounded-full bg-gradient-to-r from-[#E87536] to-[#F59A45] px-2 text-white shadow-md shadow-[#E87536]/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#E87536]/30"
-    >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 transition-colors group-hover:bg-white/30">
-        <PhoneCall className="h-4 w-4" />
-      </span>
+                <a
+                  href="tel:+919876543210"
+                  className="group flex h-14 w-full items-center justify-between gap-3 rounded-full bg-gradient-to-r from-[#E87536] to-[#F59A45] px-2 text-white shadow-md shadow-[#E87536]/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#E87536]/30"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 transition-colors group-hover:bg-white/30">
+                    <PhoneCall className="h-4 w-4" />
+                  </span>
 
-      <span className="flex flex-1 flex-col">
-        <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/80">
-          Need help? Call us
-        </span>
-        <span className="text-sm font-bold tracking-wide md:text-base">
-          +91 98765 43210
-        </span>
-      </span>
+                  <span className="flex flex-1 flex-col">
+                    <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/80">
+                      Need help? Call us
+                    </span>
+                    <span className="text-sm font-bold tracking-wide md:text-base">
+                      +91 98765 43210
+                    </span>
+                  </span>
 
-      <ArrowUpRight className="mr-2 h-5 w-5 shrink-0 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-    </a>
-  </div>
-</section>
+                  <ArrowUpRight className="mr-2 h-5 w-5 shrink-0 text-white/80 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </a>
+              </div>
+            </section>
           </aside>
         </div>
 
