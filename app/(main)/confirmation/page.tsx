@@ -186,128 +186,6 @@ export default function PaymentPage() {
 
   // Save booking details and navigate to confirmation
  
-// const handleProceedToPay = async () => {
-//   if (!booking || processing) return;
-
-//   setError("");
-
-//   if (!booking.bookingIntentId) {
-//     setError("Booking session is invalid. Please return to flight review.");
-//     return;
-//   }
-
-//   if (!contactEmail.trim()) {
-//     setError("Please provide a contact email address.");
-//     return;
-//   }
-
-//   const normalizedPhone = normalizePhone(contactPhone);
-
-//   if (!isValidPhone(normalizedPhone)) {
-//     setError(
-//       "A valid contact phone number with country code is required. Example: +919876543210."
-//     );
-//     return;
-//   }
-
-//   const incompleteTraveler = booking.travelers.some(
-//     (traveler) =>
-//       !traveler.firstName?.trim() ||
-//       !traveler.lastName?.trim() ||
-//       !traveler.dob ||
-//       !traveler.gender?.trim()
-//   );
-
-//   if (incompleteTraveler) {
-//     setError("Please complete all passenger information.");
-//     return;
-//   }
-
-//   try {
-//     setProcessing(true);
-
-//     const updatedBooking: BookingData = {
-//       ...booking,
-//       contactPhone: normalizedPhone,
-//       contactEmail: contactEmail.trim(),
-//     };
-
-//     // Save booking details in MongoDB
-//     const saveResponse = await fetch("/api/booking", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         bookingIntentId: updatedBooking.bookingIntentId,
-//         flightDetails: updatedBooking.offer,
-//         passengerDetails: updatedBooking.travelers,
-//         contactEmail: updatedBooking.contactEmail,
-//         contactPhone: updatedBooking.contactPhone,
-//         totalPrice: Number(updatedBooking.total),
-//         currency: updatedBooking.currency,
-//       }),
-//     });
-
-//     const saveResult = await saveResponse.json();
-
-//     if (!saveResponse.ok) {
-//       throw new Error(
-//         saveResult.message || "Unable to save booking details."
-//       );
-//     }
-
-//     // Send existing confirmation emails
-//     const response = await fetch(
-//       "/api/booking/send-confirmation-email",
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           booking: updatedBooking,
-//         }),
-//       }
-//     );
-
-//     const result = await response.json();
-
-//     if (!response.ok || !result.success) {
-//       throw new Error(
-//         result.message || "Unable to send booking confirmation emails."
-//       );
-//     }
-
-//     // Store saved database booking ID
-//     const confirmationData = {
-//       ...updatedBooking,
-//       bookingId: saveResult.bookingId,
-//       bookingReference: saveResult.bookingReference,
-//     };
-
-//     sessionStorage.setItem(
-//       "bookingConfirmationData",
-//       JSON.stringify(confirmationData)
-//     );
-
-//     router.push(
-//       `/booking/confirmation/${updatedBooking.bookingIntentId}`
-//     );
-//   } catch (error) {
-//     console.error("BOOKING CONFIRMATION ERROR:", error);
-
-//     setError(
-//       error instanceof Error
-//         ? error.message
-//         : "Unable to continue. Please try again."
-//     );
-
-//     setProcessing(false);
-//   }
-// };
-
-
 const handleProceedToPay = async () => {
   if (!booking || processing) return;
 
@@ -354,7 +232,32 @@ const handleProceedToPay = async () => {
       contactEmail: contactEmail.trim(),
     };
 
-    // Send confirmation emails
+    // Save booking details in MongoDB
+    const saveResponse = await fetch("/api/booking", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bookingIntentId: updatedBooking.bookingIntentId,
+        flightDetails: updatedBooking.offer,
+        passengerDetails: updatedBooking.travelers,
+        contactEmail: updatedBooking.contactEmail,
+        contactPhone: updatedBooking.contactPhone,
+        totalPrice: Number(updatedBooking.total),
+        currency: updatedBooking.currency,
+      }),
+    });
+
+    const saveResult = await saveResponse.json();
+
+    if (!saveResponse.ok) {
+      throw new Error(
+        saveResult.message || "Unable to save booking details."
+      );
+    }
+
+    // Send existing confirmation emails
     const response = await fetch(
       "/api/booking/send-confirmation-email",
       {
@@ -376,9 +279,11 @@ const handleProceedToPay = async () => {
       );
     }
 
-    // Store booking details in sessionStorage temporarily
+    // Store saved database booking ID
     const confirmationData = {
       ...updatedBooking,
+      bookingId: saveResult.bookingId,
+      bookingReference: saveResult.bookingReference,
     };
 
     sessionStorage.setItem(
@@ -401,6 +306,101 @@ const handleProceedToPay = async () => {
     setProcessing(false);
   }
 };
+
+
+// const handleProceedToPay = async () => {
+//   if (!booking || processing) return;
+
+//   setError("");
+
+//   if (!booking.bookingIntentId) {
+//     setError("Booking session is invalid. Please return to flight review.");
+//     return;
+//   }
+
+//   if (!contactEmail.trim()) {
+//     setError("Please provide a contact email address.");
+//     return;
+//   }
+
+//   const normalizedPhone = normalizePhone(contactPhone);
+
+//   if (!isValidPhone(normalizedPhone)) {
+//     setError(
+//       "A valid contact phone number with country code is required. Example: +919876543210."
+//     );
+//     return;
+//   }
+
+//   const incompleteTraveler = booking.travelers.some(
+//     (traveler) =>
+//       !traveler.firstName?.trim() ||
+//       !traveler.lastName?.trim() ||
+//       !traveler.dob ||
+//       !traveler.gender?.trim()
+//   );
+
+//   if (incompleteTraveler) {
+//     setError("Please complete all passenger information.");
+//     return;
+//   }
+
+//   try {
+//     setProcessing(true);
+
+//     const updatedBooking: BookingData = {
+//       ...booking,
+//       contactPhone: normalizedPhone,
+//       contactEmail: contactEmail.trim(),
+//     };
+
+//     // Send confirmation emails
+//     const response = await fetch(
+//       "/api/booking/send-confirmation-email",
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           booking: updatedBooking,
+//         }),
+//       }
+//     );
+
+//     const result = await response.json();
+
+//     if (!response.ok || !result.success) {
+//       throw new Error(
+//         result.message || "Unable to send booking confirmation emails."
+//       );
+//     }
+
+//     // Store booking details in sessionStorage temporarily
+//     const confirmationData = {
+//       ...updatedBooking,
+//     };
+
+//     sessionStorage.setItem(
+//       "bookingConfirmationData",
+//       JSON.stringify(confirmationData)
+//     );
+
+//     router.push(
+//       `/booking/confirmation/${updatedBooking.bookingIntentId}`
+//     );
+//   } catch (error) {
+//     console.error("BOOKING CONFIRMATION ERROR:", error);
+
+//     setError(
+//       error instanceof Error
+//         ? error.message
+//         : "Unable to continue. Please try again."
+//     );
+
+//     setProcessing(false);
+//   }
+// };
 
   if (loading) {
     return (
