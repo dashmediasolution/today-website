@@ -246,7 +246,7 @@ export default function CookiesPolicyPage() {
                             </SubHeading>
 
                             <p>
-                                These are used to analyse – in an anonymous
+                                These are used to analyse – in an Ticket O Deal
                                 manner – how our site is being accessed.
                                 For example, we can identify the number of
                                 people that visit our site together with

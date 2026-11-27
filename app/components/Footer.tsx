@@ -54,7 +54,7 @@ export default function Footer() {
                             href="/"
                             className="mb-5 inline-flex items-center rounded-lg bg-white px-4 py-3 text-xl font-extrabold tracking-wide text-[#101A30]"
                         >
-                            ANONYMOUS
+                            Ticket O Deal
                         </Link>
 
                         <p className="max-w-[320px] text-sm leading-7 text-gray-300">

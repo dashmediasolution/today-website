@@ -140,29 +140,29 @@ export default function AboutPage() {
                         <div className="mt-2 h-[2px] w-7 bg-[#ff624d]" />
 
                         <h2 className="mt-3 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                            Fly Further with Anonymous
+                            Fly Further with Ticket O Deal
                         </h2>
 
                         <p className="mt-4 text-sm leading-7 text-[#46516a] sm:text-[15px]">
-                            Anonymous is a travel platform designed to
+                        Ticket O Deal is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
                             somewhere new, we want to make discovering
                             travel options simple and convenient.
-                             Anonymous is a travel platform designed to
+                            Ticket O Deal is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
                             somewhere new, we want to make discovering
                             travel options simple and convenient.
-                             Anonymous is a travel platform designed to
+                            Ticket O Deal is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
                             somewhere new, we want to make discovering
                             travel options simple and convenient.
-                             Anonymous is a travel platform designed to
+                            Ticket O Deal is a travel platform designed to
                             help make planning your next journey easier.
                             Whether you are travelling for business,
                             enjoying a family holiday, or exploring
@@ -319,7 +319,7 @@ export default function AboutPage() {
 
                     <div className="text-center">
                         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#ff624d]">
-                            Why Choose Anonymous
+                            Why Choose Ticket O Deal
                         </p>
 
                         <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">

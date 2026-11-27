@@ -51,7 +51,7 @@ function NavbarContent() {
 
           <div className="flex flex-col">
             <span className="text-[15px] font-extrabold tracking-[0.09em] text-[#10234B] sm:text-lg">
-              ANONYMOUS
+            Ticket O Deal
             </span>
             <span className="hidden text-[9px] font-medium tracking-[0.19em] text-[#87909F] sm:block">
               EXPLORE THE WORLD
@@ -158,7 +158,7 @@ function NavbarContent() {
                       </div>
 
                       <span className="text-base font-extrabold tracking-[0.08em] text-[#10234B]">
-                        ANONYMOUS
+                      Ticket O Deal
                       </span>
                     </Link>
                   </SheetTitle>
