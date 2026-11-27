@@ -6,12 +6,17 @@ const companyLinks = [
     { name: "About Us", href: "/about" },
     { name: "Contact Us", href: "/contact" },
     { name: "Flights", href: "/search-results" },
+    { name: "Terms & Conditions", href: "/terms-and-conditions" },
+    { name: "Disclaimer", href: "/disclaimer" },
 ];
 
 const policyLinks = [
-    { name: "Privacy Policy", href: "/privacy-policy" },
-    { name: "Terms & Conditions", href: "/terms-and-conditions" },
+    { name: "Advertiser Disclosure", href: "/advertiser-disclosure" },
+    { name: "PFare Disclosure Policy", href: "/fare-disclosure-policy" },
+    { name: "California Consumer Privacy Notice", href: "/california-consumer-privacy-notice" },
     { name: "Cancellation Policy & Refund Policy", href: "/cancellation-and-refund-policy" },
+    { name: "Privacy Policy", href: "/privacy-policy" },
+
 ];
 
 const footerLinkClass =
@@ -132,20 +137,22 @@ export default function Footer() {
                             <strong className="font-semibold text-gray-200">
                                 Disclaimer:
                             </strong>{" "}
-                            Travel prices, schedules, availability, and service
-                            details may change without prior notice. All bookings
-                            are subject to the applicable terms and conditions
-                            of the respective travel providers.
-                        </p>
+                            [Brand Name] is an independent travel agency operated by [Company Name]
+                             We are not an airline and are not affiliated with any airline. 
+                             Calls are answered by our own travel agents, not airline staff. 
+                             Fares and availability can change until your ticket is issued.
 
-                        <p>
-                            Information displayed on this website is provided
-                            for travel planning and booking purposes.
-                        </p>
 
-                        <p>
-                            Please review the applicable booking details and
-                            policies before confirming your reservation.
+                        </p>
+                         <p>
+                        [Brand Name] is operated by [Company Name].
+                        </p>
+                         <p>
+                        Advertising services are managed by Yatop Media Limited, our appointed digital 
+                        marketing agency. All bookings, payments and customer relationships belong solely to 
+                        [Company Name].
+
+
                         </p>
 
                     </div>
