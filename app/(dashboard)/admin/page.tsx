@@ -35,7 +35,7 @@ export default async function AdminDashboard() {
     },
   });
 
-  const serializedBookings = bookings.map((booking) => ({
+  const serializedBookings = bookings.map((booking:any) => ({
     ...booking,
     createdAt: booking.createdAt.toISOString(),
     updatedAt: booking.updatedAt.toISOString(),
